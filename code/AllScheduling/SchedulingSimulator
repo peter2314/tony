@@ -1,0 +1,242 @@
+import java.util.*;
+
+public class SchedulingSimulator {
+    static class Process {
+        int pid, arrivalTime, burstTime, remainingTime, priority;
+        int completionTime, waitingTime, turnaroundTime;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of processes: ");
+        int n = sc.nextInt();
+        Process[] processes = new Process[n];
+
+        for (int i = 0; i < n; i++) {
+            processes[i] = new Process();
+            processes[i].pid = i + 1;
+            System.out.println("\nEnter details for Process " + (i + 1));
+            System.out.print("Arrival Time: ");
+            processes[i].arrivalTime = sc.nextInt();
+            System.out.print("Burst Time: ");
+            processes[i].burstTime = sc.nextInt();
+            processes[i].remainingTime = processes[i].burstTime;
+            System.out.print("Priority (lower number = higher priority): ");
+            processes[i].priority = sc.nextInt();
+        }
+
+        System.out.println("\n===== CPU Scheduling Simulator =====");
+        System.out.println("5. FCFS + SJF (Preemptive)");
+        System.out.println("6. FCFS + Priority");
+        System.out.println("7. FCFS + Round Robin");
+        System.out.println("8. SJF + Round Robin");
+        System.out.println("9. Priority + Round Robin");
+        System.out.println("10. Priority + SJF");
+        System.out.print("Enter your choice (5–10): ");
+        int choice = sc.nextInt();
+
+        switch (choice) {
+            case 5:
+                simulateFCFS(copyAll(processes));
+                simulateSJFPreemptive(copyAll(processes));
+                break;
+            case 6:
+                simulateFCFS(copyAll(processes));
+                simulatePriority(copyAll(processes));
+                break;
+            case 7:
+                simulateFCFS(copyAll(processes));
+                simulateRoundRobin(copyAll(processes), sc);
+                break;
+            case 8:
+                simulateSJF(copyAll(processes));
+                simulateRoundRobin(copyAll(processes), sc);
+                break;
+            case 9:
+                simulatePriority(copyAll(processes));
+                simulateRoundRobin(copyAll(processes), sc);
+                break;
+            case 10:
+                simulatePriority(copyAll(processes));
+                simulateSJF(copyAll(processes));
+                break;
+            default:
+                System.out.println("Invalid choice!");
+        }
+        sc.close();
+    }
+
+    // ---------- FCFS ----------
+    static void simulateFCFS(Process[] p) {
+        Arrays.sort(p, Comparator.comparingInt(a -> a.arrivalTime));
+        int currentTime = 0;
+        for (Process pr : p) {
+            if (currentTime < pr.arrivalTime)
+                currentTime = pr.arrivalTime;
+            pr.completionTime = currentTime + pr.burstTime;
+            pr.turnaroundTime = pr.completionTime - pr.arrivalTime;
+            pr.waitingTime = pr.turnaroundTime - pr.burstTime;
+            currentTime = pr.completionTime;
+        }
+        System.out.println("\n=== FCFS Scheduling ===");
+        printTable(p);
+    }
+
+    // ---------- SJF (Non-preemptive) ----------
+    static void simulateSJF(Process[] p) {
+        int time = 0, completed = 0;
+        boolean[] done = new boolean[p.length];
+        while (completed != p.length) {
+            int idx = -1, minBT = Integer.MAX_VALUE;
+            for (int i = 0; i < p.length; i++) {
+                if (!done[i] && p[i].arrivalTime <= time && p[i].burstTime < minBT) {
+                    minBT = p[i].burstTime;
+                    idx = i;
+                }
+            }
+            if (idx == -1) {
+                time++;
+                continue;
+            }
+            time += p[idx].burstTime;
+            p[idx].completionTime = time;
+            p[idx].turnaroundTime = time - p[idx].arrivalTime;
+            p[idx].waitingTime = p[idx].turnaroundTime - p[idx].burstTime;
+            done[idx] = true;
+            completed++;
+        }
+        System.out.println("\n=== SJF (Non-preemptive) Scheduling ===");
+        printTable(p);
+    }
+
+    // ---------- SJF (Preemptive / SRTF) ----------
+    static void simulateSJFPreemptive(Process[] p) {
+        int time = 0, completed = 0;
+        boolean[] done = new boolean[p.length];
+        while (completed != p.length) {
+            int idx = -1, minRT = Integer.MAX_VALUE;
+            for (int i = 0; i < p.length; i++) {
+                if (!done[i] && p[i].arrivalTime <= time && p[i].remainingTime < minRT && p[i].remainingTime > 0) {
+                    minRT = p[i].remainingTime;
+                    idx = i;
+                }
+            }
+            if (idx == -1) {
+                time++;
+                continue;
+            }
+            p[idx].remainingTime--;
+            time++;
+            if (p[idx].remainingTime == 0) {
+                done[idx] = true;
+                completed++;
+                p[idx].completionTime = time;
+                p[idx].turnaroundTime = p[idx].completionTime - p[idx].arrivalTime;
+                p[idx].waitingTime = p[idx].turnaroundTime - p[idx].burstTime;
+            }
+        }
+        System.out.println("\n=== SJF (Preemptive / SRTF) Scheduling ===");
+        printTable(p);
+    }
+
+    // ---------- Priority (Non-preemptive) ----------
+    static void simulatePriority(Process[] p) {
+        int time = 0, completed = 0;
+        boolean[] done = new boolean[p.length];
+        while (completed != p.length) {
+            int idx = -1, minPri = Integer.MAX_VALUE;
+            for (int i = 0; i < p.length; i++) {
+                if (!done[i] && p[i].arrivalTime <= time && p[i].priority < minPri) {
+                    minPri = p[i].priority;
+                    idx = i;
+                }
+            }
+            if (idx == -1) {
+                time++;
+                continue;
+            }
+            time += p[idx].burstTime;
+            p[idx].completionTime = time;
+            p[idx].turnaroundTime = time - p[idx].arrivalTime;
+            p[idx].waitingTime = p[idx].turnaroundTime - p[idx].burstTime;
+            done[idx] = true;
+            completed++;
+        }
+        System.out.println("\n=== Priority Scheduling ===");
+        printTable(p);
+    }
+
+    // ---------- Round Robin ----------
+    static void simulateRoundRobin(Process[] p, Scanner sc) {
+        System.out.print("\nEnter Time Quantum: ");
+        int tq = sc.nextInt();
+
+        Queue<Process> q = new LinkedList<>();
+        int time = 0;
+        List<Process> arrived = new ArrayList<>();
+        Arrays.sort(p, Comparator.comparingInt(a -> a.arrivalTime));
+        int completed = 0;
+        boolean[] done = new boolean[p.length];
+
+        while (completed != p.length) {
+            for (Process pr : p)
+                if (!done[pr.pid - 1] && pr.arrivalTime <= time && !q.contains(pr))
+                    q.add(pr);
+
+            if (q.isEmpty()) {
+                time++;
+                continue;
+            }
+
+            Process cur = q.poll();
+            int exec = Math.min(tq, cur.remainingTime);
+            cur.remainingTime -= exec;
+            time += exec;
+
+            for (Process pr : p)
+                if (!done[pr.pid - 1] && pr.arrivalTime <= time && !q.contains(pr))
+                    q.add(pr);
+
+            if (cur.remainingTime == 0) {
+                cur.completionTime = time;
+                cur.turnaroundTime = cur.completionTime - cur.arrivalTime;
+                cur.waitingTime = cur.turnaroundTime - cur.burstTime;
+                done[cur.pid - 1] = true;
+                completed++;
+            } else {
+                q.add(cur);
+            }
+        }
+        System.out.println("\n=== Round Robin Scheduling ===");
+        printTable(p);
+    }
+
+    // ---------- Utility ----------
+    static Process[] copyAll(Process[] original) {
+        Process[] copy = new Process[original.length];
+        for (int i = 0; i < original.length; i++) {
+            copy[i] = new Process();
+            copy[i].pid = original[i].pid;
+            copy[i].arrivalTime = original[i].arrivalTime;
+            copy[i].burstTime = original[i].burstTime;
+            copy[i].priority = original[i].priority;
+            copy[i].remainingTime = original[i].burstTime;
+        }
+        return copy;
+    }
+
+    static void printTable(Process[] p) {
+        System.out.println("PID\tAT\tBT\tPR\tCT\tTAT\tWT");
+        double totalTAT = 0, totalWT = 0;
+        for (Process pr : p) {
+            totalTAT += pr.turnaroundTime;
+            totalWT += pr.waitingTime;
+            System.out.printf("P%d\t%d\t%d\t%d\t%d\t%d\t%d\n",
+                    pr.pid, pr.arrivalTime, pr.burstTime, pr.priority,
+                    pr.completionTime, pr.turnaroundTime, pr.waitingTime);
+        }
+        System.out.printf("Average TAT = %.2f, Average WT = %.2f\n",
+                totalTAT / p.length, totalWT / p.length);
+    }
+}
