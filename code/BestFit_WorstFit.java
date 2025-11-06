@@ -1,0 +1,72 @@
+import java.util.*;
+
+public class BestFit_WorstFit {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of memory blocks: ");
+        int m = sc.nextInt();
+        int[] blocks = new int[m];
+        System.out.println("Enter size of each memory block:");
+        for (int i = 0; i < m; i++) blocks[i] = sc.nextInt();
+
+        System.out.print("\nEnter number of processes: ");
+        int n = sc.nextInt();
+        int[] process = new int[n];
+        System.out.println("Enter size of each process:");
+        for (int i = 0; i < n; i++) process[i] = sc.nextInt();
+
+        bestFit(Arrays.copyOf(blocks, m), process);
+        worstFit(Arrays.copyOf(blocks, m), process);
+        sc.close();
+    }
+
+    static void bestFit(int[] blocks, int[] process) {
+        int[] allocate = new int[process.length];
+        Arrays.fill(allocate, -1);
+
+        for (int i = 0; i < process.length; i++) {
+            int bestIdx = -1;
+            for (int j = 0; j < blocks.length; j++) {
+                if (blocks[j] >= process[i]) {
+                    if (bestIdx == -1 || blocks[j] < blocks[bestIdx])
+                        bestIdx = j;
+                }
+            }
+            if (bestIdx != -1) {
+                allocate[i] = bestIdx;
+                blocks[bestIdx] -= process[i];
+            }
+        }
+        System.out.println("\n=== Best Fit Allocation ===");
+        printResult(process, allocate);
+    }
+
+    static void worstFit(int[] blocks, int[] process) {
+        int[] allocate = new int[process.length];
+        Arrays.fill(allocate, -1);
+
+        for (int i = 0; i < process.length; i++) {
+            int worstIdx = -1;
+            for (int j = 0; j < blocks.length; j++) {
+                if (blocks[j] >= process[i]) {
+                    if (worstIdx == -1 || blocks[j] > blocks[worstIdx])
+                        worstIdx = j;
+                }
+            }
+            if (worstIdx != -1) {
+                allocate[i] = worstIdx;
+                blocks[worstIdx] -= process[i];
+            }
+        }
+        System.out.println("\n=== Worst Fit Allocation ===");
+        printResult(process, allocate);
+    }
+
+    static void printResult(int[] process, int[] allocate) {
+        System.out.println("Process No.\tProcess Size\tBlock No.");
+        for (int i = 0; i < process.length; i++) {
+            System.out.print("P" + (i + 1) + "\t\t" + process[i] + "\t\t");
+            System.out.println((allocate[i] != -1) ? (allocate[i] + 1) : "Not Allocated");
+        }
+    }
+}

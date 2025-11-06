@@ -1,0 +1,103 @@
+import java.util.*;
+
+class LRU {
+    int p[], n, fr[], m, fs[], index, k, l;
+    int flag1 = 0, flag2 = 0, pf = 0, framesize;
+    Scanner src = new Scanner(System.in);
+
+    void read() {
+        System.out.print("Enter page table size: ");
+        n = src.nextInt();
+        p = new int[n];
+
+        System.out.println("Enter the Reference String:");
+        for (int i = 0; i < n; i++)
+            p[i] = src.nextInt();
+
+        System.out.print("Enter the Number of frames: ");
+        m = src.nextInt();
+        framesize = m;
+
+        fr = new int[m];
+        fs = new int[m];
+    }
+
+    void display() {
+        for (int i = 0; i < m; i++) {
+            if (fr[i] == -1)
+                System.out.print("[ ] ");
+            else
+                System.out.print("[" + fr[i] + "] ");
+        }
+        System.out.println();
+    }
+
+    void lru() {
+        for (int i = 0; i < m; i++)
+            fr[i] = -1;
+
+        for (int j = 0; j < n; j++) {
+            flag1 = 0;
+            flag2 = 0;
+
+            // Check if page is already present (HIT)
+            for (int i = 0; i < m; i++) {
+                if (fr[i] == p[j]) {
+                    flag1 = 1;
+                    flag2 = 1;
+                    break;
+                }
+            }
+
+            // Empty frame available
+            if (flag1 == 0) {
+                for (int i = 0; i < m; i++) {
+                    if (fr[i] == -1) {
+                        fr[i] = p[j];
+                        flag2 = 1;
+                        pf++;
+                        break;
+                    }
+                }
+            }
+
+            // If no empty frame, apply LRU replacement
+            if (flag2 == 0) {
+                for (int i = 0; i < m; i++)
+                    fs[i] = 0;
+
+                // Mark recently used pages
+                for (k = j - 1, l = 1; l <= framesize - 1 && k >= 0; l++, k--) {
+                    for (int i = 0; i < m; i++) {
+                        if (fr[i] == p[k])
+                            fs[i] = 1;
+                    }
+                }
+
+                for (int i = 0; i < m; i++) {
+                    if (fs[i] == 0) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                fr[index] = p[j];
+                pf++;
+            }
+
+            System.out.print("Page " + p[j] + " -> ");
+            display();
+        }
+
+        System.out.println("\nTotal Page Faults: " + pf);
+        System.out.println("Total Hits: " + (n - pf));
+        System.out.printf("Page Fault Ratio: %.2f%n", (double) pf / n);
+        System.out.printf("Hit Ratio: %.2f%n", (double) (n - pf) / n);
+    }
+
+    public static void main(String args[]) {
+        LRU a = new LRU();
+        a.read();
+        a.lru();
+    }
+}
