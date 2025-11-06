@@ -1,0 +1,3 @@
+ADD	AREG	(P,1)
+ADD	BREG	(P,2)
+MEND
