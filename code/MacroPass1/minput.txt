@@ -1,0 +1,5 @@
+MACRO
+INCR &A, &B=5
+ADD AREG, &A
+ADD BREG, &B
+MEND
