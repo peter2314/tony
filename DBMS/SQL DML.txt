@@ -45,8 +45,8 @@ UPDATE Student
 SET Email = 'amitsharma123@gmail.com'
 WHERE StudentID = 1;
 
-DELETE FROM Student
-WHERE StudentID = 3;
+DELETE FROM marks WHERE studentID = 3;
+DELETE FROM student WHERE studentID = 3;
 
 SELECT StudentID, Subject, MarksObtained
 FROM Marks
@@ -85,5 +85,6 @@ SELECT ROW_NUMBER() OVER () AS ResultID,
        END AS Grade
 FROM Marks
 GROUP BY StudentID;
+
 
 SELECT * FROM Result;
