@@ -1,0 +1,98 @@
+CREATE DATABASE CompanyDB;
+USE CompanyDB;
+
+CREATE TABLE Department (
+    DeptID INT PRIMARY KEY,
+    DeptName VARCHAR(50),
+    Location VARCHAR(50)
+);
+
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Designation VARCHAR(50),
+    Salary DECIMAL(10,2),
+    DeptID INT,
+    ManagerID INT,
+    FOREIGN KEY (DeptID) REFERENCES Department(DeptID)
+);
+ 
+CREATE TABLE Performance (
+    PerfID INT PRIMARY KEY,
+    EmpID INT,
+    Rating INT CHECK (Rating BETWEEN 1 AND 10),
+    Year INT,
+    FOREIGN KEY (EmpID) REFERENCES Employee(EmpID)
+);
+
+INSERT INTO Department VALUES
+(1, 'HR', 'Pune'),
+(2, 'IT', 'Mumbai'),
+(3, 'Finance', 'Nashik');
+
+INSERT INTO Employee VALUES
+(101, 'Amit Sharma', 'Manager', 80000, 2, NULL),
+(102, 'Sneha Patil', 'Developer', 55000, 2, 101),
+(103, 'Rahul Deshmukh', 'Accountant', 45000, 3, NULL),
+(104, 'Pooja Joshi', 'HR Executive', 40000, 1, NULL),
+(105, 'Kiran More', 'Developer', 60000, 2, 101);
+
+INSERT INTO Performance VALUES
+(1, 101, 9, 2023),
+(2, 102, 7, 2023),
+(3, 103, 8, 2023),
+(4, 104, 6, 2023),
+(5, 105, 10, 2023);
+
+
+SELECT E.EmpName, E.Designation, D.DeptName, D.Location
+FROM Employee E
+INNER JOIN Department D ON E.DeptID = D.DeptID;
+
+SELECT D.DeptName, E.EmpName
+FROM Department D
+LEFT JOIN Employee E ON D.DeptID = E.DeptID;
+
+SELECT E.EmpName, D.DeptName
+FROM Employee E
+RIGHT JOIN Department D ON E.DeptID = D.DeptID;
+
+SELECT E.EmpName AS Employee, M.EmpName AS Manager
+FROM Employee E
+JOIN Employee M ON E.ManagerID = M.EmpID;
+
+SELECT EmpName, Salary
+FROM Employee
+WHERE Salary > (SELECT AVG(Salary) FROM Employee);
+
+SELECT EmpName
+FROM Employee
+WHERE EmpID IN (
+  SELECT EmpID FROM Performance
+  WHERE Rating > (SELECT AVG(Rating) FROM Performance)
+);
+
+SELECT D.DeptName, SUM(E.Salary) AS TotalSalary
+FROM Employee E
+JOIN Department D ON E.DeptID = D.DeptID
+GROUP BY D.DeptName;
+
+CREATE VIEW High_Performers AS
+SELECT E.EmpName, E.Designation, P.Rating
+FROM Employee E
+JOIN Performance P ON E.EmpID = P.EmpID
+WHERE P.Rating >= 8;
+SELECT * FROM High_Performers;
+
+SELECT EmpName, DeptID, Salary
+FROM Employee E
+WHERE Salary = (
+  SELECT MAX(Salary)
+  FROM Employee
+  WHERE DeptID = E.DeptID
+);
+
+SELECT EmpName, Designation, Salary
+FROM Employee
+ORDER BY Salary DESC
+LIMIT 3;
