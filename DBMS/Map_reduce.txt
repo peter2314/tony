@@ -1,0 +1,29 @@
+use demo
+
+db.orders.insertOne({cust_id:"A123",amount: 500, status:'A'}
+
+db.orders.insertOne({cust_id:"A123",amount: 250, status:'A'})
+
+db.orders.insertOne({cust_id:"A121",amount: 200, status:'A'})
+
+db.orders.insertOne({cust_id:"B234",amount: 200, status:'B'})
+
+db.orders.insertOne({cust_id:"A121",amount: 400, status:'D'})
+
+db.orders.insertOne({cust_id:"B234",amount: 234, status:'A'})
+
+db.orders.insertOne({cust_id:"A234",amount: 400, status:'A'})	
+
+db.orders.insertOne({cust_id:"A234",amount: 400, status:''})
+
+db.orders.insertOne({cust_id:"A234",amount: 400, status:'B'})
+
+var mapFunction1=function(){emit(this.cust_id,this.amount);};
+
+var reduceFunction1=function(keyCustid,valuesamount){return Array.avg(valuesamount);};
+
+db.orders.mapReduce( mapFunction1, reduceFunction1,{ out: "map_reduce_example" })
+
+db.map_reduce_example.find()
+
+db.orders.distinct("cust_id")
