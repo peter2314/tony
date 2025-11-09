@@ -1,0 +1,45 @@
+use OnlineShoppingDB
+
+db.Customers.insertMany([
+  { CustomerID: 1, Name: "Amit Sharma", City: "Pune", Email: "amit@gmail.com" },
+  { CustomerID: 2, Name: "Sneha Patil", City: "Mumbai", Email: "sneha@gmail.com" },
+  { CustomerID: 3, Name: "Rahul Deshmukh", City: "Nashik", Email: "rahul@gmail.com" }
+])
+
+db.Products.insertMany([
+  { ProductID: 101, Name: "Laptop", Price: 55000, Brand: "HP", Stock: 10 },
+  { ProductID: 102, Name: "Mobile", Price: 20000, Brand: "Samsung", Stock: 15 },
+  { ProductID: 103, Name: "Headphones", Price: 1500, Brand: "Boat", Stock: 25 }
+])
+
+db.Orders.insertMany([
+  { OrderID: 501, CustomerID: 1, ProductID: 101, Quantity: 1, Total: 55000 },
+  { OrderID: 502, CustomerID: 2, ProductID: 103, Quantity: 2, Total: 3000 }
+])
+
+
+db.Customers.find().pretty()
+
+db.Products.find({ Price: { $gt: 5000 } })
+
+db.Customers.find({ $or: [ { City: "Pune" }, { City: "Mumbai" } ] })
+
+
+db.Products.updateOne(
+  { ProductID: 103 },
+  { $set: { Price: 1800 } }
+)
+
+db.Products.updateOne(
+  { Name: "Mobile" },
+  { $inc: { Stock: 5 } }
+)
+
+
+db.Customers.deleteOne({ CustomerID: 3 })
+
+db.Products.deleteMany({ Price: { $lt: 2000 } })
+
+var prod = { ProductID: 104, Name: "Smart Watch", Price: 4500, Brand: "Noise", Stock: 12 }
+db.Products.insertOne(prod)
+db.Products().find().pretty()
