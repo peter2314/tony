@@ -1,0 +1,32 @@
+package Connect;
+
+
+import com.mongodb.DB; 
+import com.mongodb.MongoClient; 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+
+public class MakeConnection { 
+	public static void main(String[] args) {
+		try { 
+			// code to create the connection
+			MongoClient mongoClient = new MongoClient("localhost", 27017); 
+			// code to connect to the database
+			DB db = mongoClient.getDB("T3BATCH");
+
+			// get the User collection from DB
+			DBCollection userCollection = db.getCollection("Abhinav");
+			BasicDBObject bO = new BasicDBObject();
+
+			// adding custom _id
+			
+			bO.put("name", "AMRUTVAHINI");
+		
+			// inserting data into collection
+			userCollection.insert(bO);
+		} 
+		catch(Exception e) { 
+			e.printStackTrace(); 
+		} 
+	}
+}
