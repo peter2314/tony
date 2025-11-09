@@ -1,0 +1,70 @@
+Practical No:7
+
+Write a Stored Procedure namely proc_Grade for the categorization of student. If marks scored by students in examination is <=1500 and marks>=990 then student will be placed in distinction category if marks scored are between 989 and 900 category is first class, if marks 899 and 825 category is Higher Second Class 
+
+
+SQL> select * from student;
+
+    ROLLNO NAME            TOTAL_MARKS
+---------- --------------- -----------
+        13       a                       990
+        14       b                       900
+         4        c                       999
+SQL> select * from result;
+
+    ROLLNO NAME       CLASS
+---------- ---------- --------------------
+        13	 a          
+        14 	b          
+         4 	c          
+
+
+
+
+
+
+
+create or replace procedure test( roll in number)
+        as
+      t student.total_marks%type;
+          begin
+    select m.total_marks into t from student m where m.rollno=roll;
+         if (t<=1500 and t>=990) then
+ update result set class='distinction' where rollno=roll;
+dbms_output.put_line(roll);
+        dbms_output.put_line('distinction');
+       elsif (t<=989 and t>=900 ) then
+  update result set class='first class' where rollno=roll;
+        dbms_output.put_line('first class');
+       elsif(t<=899 and t>=825)then
+ update result set class='second class' where rollno=roll;
+dbms_output.put_line('second class');
+       else
+     update result set class='pass' where rollno=roll;
+       end if;
+     end;
+/
+********************output****************
+SQL> execute test(14);
+first class
+
+PL/SQL procedure successfully completed.
+
+SQL> execute proc3(13);
+13
+distinction
+
+PL/SQL procedure successfully completed.
+
+SQL> execute proc3(4);
+4
+distinction
+
+PL/SQL procedure successfully completed.SQL> select * from result;
+
+    ROLLNO NAME       CLASS
+---------- ---------- --------------------
+        13 a          distinction
+        14 b          first class
+         4 c          distinction
+
