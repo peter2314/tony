@@ -1,0 +1,50 @@
+CREATE TABLE Stud_Marks (
+    Roll INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Total_Marks INT
+);
+
+CREATE TABLE Result (
+    Roll INT,
+    Name VARCHAR(50),
+    Class VARCHAR(30)
+);
+
+INSERT INTO Stud_Marks VALUES (1, 'Amit Sharma', 1450);
+INSERT INTO Stud_Marks VALUES (2, 'Sneha Patil', 950);
+INSERT INTO Stud_Marks VALUES (3, 'Rahul Deshmukh', 870);
+INSERT INTO Stud_Marks VALUES (4, 'Priya Joshi', 800);
+
+commit;
+
+CREATE OR REPLACE PROCEDURE proc_Grade IS
+    v_class VARCHAR(30);
+BEGIN
+    FOR rec IN (SELECT Roll, Name, Total_Marks FROM Stud_Marks) LOOP
+
+        IF rec.Total_Marks BETWEEN 990 AND 1500 THEN
+            v_class := 'Distinction';
+        ELSIF rec.Total_Marks BETWEEN 900 AND 989 THEN
+            v_class := 'First Class';
+        ELSIF rec.Total_Marks BETWEEN 825 AND 899 THEN
+            v_class := 'Higher Second Class';
+        ELSE
+            v_class := 'Fail';
+        END IF;
+
+        INSERT INTO Result (Roll, Name, Class)
+        VALUES (rec.Roll, rec.Name, v_class);
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Student Grades categorized successfully.');
+END;
+/
+SET SERVEROUTPUT ON;
+
+BEGIN
+    proc_Grade;
+END;
+/
+
+SELECT * FROM Result;
+

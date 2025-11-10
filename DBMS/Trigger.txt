@@ -1,0 +1,31 @@
+CREATE TABLE lib1 (
+    rollno NUMBER,
+    name VARCHAR2(50),
+    bookname VARCHAR2(50)
+);
+
+CREATE TABLE lib_audit (
+    rollno NUMBER,
+    name VARCHAR2(50),
+    bookname VARCHAR2(50)
+);
+
+INSERT INTO lib1 VALUES (101, 'Om', 'DBMS');
+INSERT INTO lib1 VALUES (102, 'Raj', 'SEPM');
+COMMIT;
+
+CREATE OR REPLACE TRIGGER libtrig
+AFTER DELETE OR UPDATE ON lib1
+REFERENCING OLD AS o NEW AS n
+FOR EACH ROW
+BEGIN
+    INSERT INTO lib_audit (rollno, name, bookname)
+    VALUES (:o.rollno, :o.name, :o.bookname);
+END;
+/
+
+SHOW ERRORS TRIGGER libtrig;
+
+DELETE FROM lib1 WHERE rollno = 101;
+INSERT INTO lib_audit VALUES (101, 'Amit Sharma', 'DBMS');
+SELECT * FROM lib_audit;

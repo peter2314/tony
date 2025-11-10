@@ -1,0 +1,44 @@
+CREATE TABLE info (
+  rollno NUMBER(20),
+  name VARCHAR2(20),
+  branch VARCHAR2(20)
+);
+
+CREATE TABLE info1 (
+  rollno NUMBER(20),
+  name VARCHAR2(20),
+  branch VARCHAR2(20)
+);
+
+INSERT INTO info VALUES (1, 'Om' , 'Computer');
+INSERT INTO info VALUES (2, 'Raj' , 'Mech');
+INSERT INTO info VALUES (3, 'Sai' , 'ECE');
+INSERT INTO info1 VALUES (5, 'Rahul' , 'IT');
+INSERT INTO info1 VALUES (2, 'Raj' , 'Mech');
+INSERT INTO info1 VALUES (6, 'Pravin' , 'Comp');
+
+COMMIT;
+
+DECLARE
+  rn info.rollno%TYPE;
+  nm info.name%TYPE;
+  br info.branch%TYPE;
+
+  CURSOR c_info IS
+    SELECT * FROM info
+    MINUS
+    SELECT * FROM info1;
+BEGIN
+  OPEN c_info;
+  LOOP
+    FETCH c_info INTO rn, nm, br;
+    EXIT WHEN c_info%NOTFOUND;
+    INSERT INTO info1 VALUES (rn, nm, br);
+  END LOOP;
+  CLOSE c_info;
+END;
+/
+
+SELECT * FROM info;
+SELECT * FROM info1;
+
