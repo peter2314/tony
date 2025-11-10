@@ -5,20 +5,21 @@ Create folder in MongoJavaProject as ' C:\MongoJavaProject\Connect '
 save java file as MakeConnection.java in 'C:\MongoJavaProject\Connect' Folder
 Should look like =  C:\MongoJavaProject\Connect\MakeConnection.java
 
-Download ' mongo-java-driver-3.12.14.jar ' and save in ' C:\MongoJavaProject\mongo-java-driver-3.12.14.jar '
+Download ' mongo-java-driver-3.12.10.jar ' and save in ' C:\MongoJavaProject\mongo-java-driver-3.12.10.jar '
 
 * Open terminal
 
 cd C:\MongoJavaProject
 
-javac -cp ".;mongo-java-driver-3.12.14.jar" Connect\MakeConnection.java
+javac -cp ".;mongo-java-driver-3.12.10.jar" Connect\MakeConnection.java
 
-java -cp ".;mongo-java-driver-3.12.14.jar" Connect.MakeConnection
+java -cp ".;mongo-java-driver-3.12.10.jar" Connect.MakeConnection
 		
 		Document inserted successfully!
 
 mongosh
 use T3BATCH
 db.Abhinav.find().pretty()
+
 
 DONE!!!
