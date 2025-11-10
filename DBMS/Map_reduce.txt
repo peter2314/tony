@@ -1,6 +1,6 @@
 use demo
 
-db.orders.insertOne({cust_id:"A123",amount: 500, status:'A'}
+db.orders.insertOne({cust_id:"A123",amount: 500, status:'A'})
 
 db.orders.insertOne({cust_id:"A123",amount: 250, status:'A'})
 
@@ -25,5 +25,6 @@ var reduceFunction1=function(keyCustid,valuesamount){return Array.avg(valuesamou
 db.orders.mapReduce( mapFunction1, reduceFunction1,{ out: "map_reduce_example" })
 
 db.map_reduce_example.find()
+
 
 db.orders.distinct("cust_id")
