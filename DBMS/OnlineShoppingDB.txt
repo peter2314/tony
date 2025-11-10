@@ -42,4 +42,5 @@ db.Products.deleteMany({ Price: { $lt: 2000 } })
 
 var prod = { ProductID: 104, Name: "Smart Watch", Price: 4500, Brand: "Noise", Stock: 12 }
 db.Products.insertOne(prod)
-db.Products().find().pretty()
+
+db.Products.find().pretty()
