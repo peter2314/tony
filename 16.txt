@@ -101,3 +101,10 @@ class LRU {
         a.lru();
     }
 }
+**************
+sample input
+***********
+Enter page table size: 12
+Enter the Reference String:
+7 0 1 2 0 3 0 4 2 3 0 3
+Enter the Number of frames: 3
