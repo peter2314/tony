@@ -94,3 +94,29 @@ public class FCFS_Priority {
         System.out.printf("Average TAT = %.2f, Average WT = %.2f\n", totalTAT / p.length, totalWT / p.length);
     }
 }
+
+*******************
+sample input
+*********
+Enter number of processes: 4
+
+Enter details for Process 1
+Arrival Time: 0
+Burst Time: 5
+Priority (lower = higher priority): 2
+
+Enter details for Process 2
+Arrival Time: 1
+Burst Time: 3
+Priority (lower = higher priority): 1
+
+Enter details for Process 3
+Arrival Time: 2
+Burst Time: 8
+Priority (lower = higher priority): 4
+
+Enter details for Process 4
+Arrival Time: 3
+Burst Time: 6
+Priority (lower = higher priority): 3
+
