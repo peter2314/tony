@@ -1,0 +1,215 @@
+Practical 01
+
+import pandas as pd
+import numpy as np
+df=pd.read_csv("titanic.csv")
+df.info()
+df.shape
+df.describe()
+df.head()
+df.isnull().sum()
+df['Age'].fillna(df['Age'].mean(),inplace=True)
+df['Embarked'].fillna(df['Embarked'].mode()[0],inplace=True)
+df['Cabin'].fillna("Unknown", inplace=True)
+df['Survived']=df['Survived'].astype('category')
+df = pd.get_dummies(df,columns=['Sex','Embarked']) 
+print(df.head())
+df.head()
+
+Apply One-Hot Encoding , Avoid Dummy Variable Trap
+df = pd.get_dummies(df, columns=['Sex', 'Embarked'], drop_first=True)
+
+
+Practical 02
+
+import pandas as pd
+import numpy as np
+df= pd.DataFrame({
+    'Name':['A','B','C','D','E'],
+    'Marks':[85,90,None,40,30],
+    'Attendence':[90,None,80,70,95]
+})
+df
+df['Marks'].fillna(df['Marks'].mean(), inplace=True)
+df['Attendence'].fillna(df['Attendence'].median(), inplace=True)
+Q1 = df['Marks'].quantile(0.25)
+Q3 = df['Marks'].quantile(0.75)
+IQR = Q3 - Q1
+lower = Q1 - 1.5 * IQR
+upper = Q3 + 1.5 * IQR
+outliers=df[(df['Marks'] < lower) | (df['Marks'] > upper)]
+print("Outliers:\n",outliers)
+df['Marks_norm'] = (df['Marks'] - df['Marks'].min()) / (df['Marks'].max() - df['Marks'].min())
+df['Marks_log']=np.log(df['Marks'])
+print(df)
+df
+
+
+Practical 03
+
+import pandas as pd
+df=pd.read_csv("iris.csv")
+df
+print(df.mean(numeric_only = True))
+print(df.median(numeric_only = True))
+print(df.min(numeric_only = True))
+print(df.max(numeric_only = True))
+print(df.var(numeric_only = True))
+print(df.std(numeric_only = True))
+df.drop('Id', axis=1, inplace=True)
+print(df.groupby('Species').mean(numeric_only = True))
+print(df["Species"].unique())
+
+
+Practical 04
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression 
+from sklearn.metrics import mean_squared_error, r2_score
+df=pd.read_csv("BostonHousing.csv")
+df
+df.shape
+X= df.drop('medv',axis=1)
+Y=df['medv']
+X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.2)
+model=LinearRegression()
+model.fit(X_train,Y_train)
+Y_pred = model.predict(X_test)
+print("MSE:", mean_squared_error(Y_test,Y_pred))
+print("R2 score:", r2_score(Y_test,Y_pred))
+
+
+Practical 05
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score,confusion_matrix,precision_score,recall_score
+df=pd.read_csv("Social_Network_Ads.csv")
+df
+X = df[['Age','EstimatedSalary']]
+Y = df['Purchased']
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+model=LogisticRegression()
+model.fit(X_train,Y_train)
+Y_pred= model.predict(X_test)
+print("Confusion Matrix:\n",confusion_matrix(Y_test,Y_pred))
+print("Accuracy:\n",accuracy_score(Y_test,Y_pred))
+print("Error Rate:\n",1-accuracy_score(Y_test,Y_pred))
+print("Precision:\n",precision_score(Y_test,Y_pred))
+print("Recall:\n",recall_score(Y_test,Y_pred))
+
+
+Practical 06
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score,confusion_matrix,precision_score,recall_score
+df = pd.read_csv("iris.csv")
+df
+X = df.drop('Species', axis=1)
+Y = df['Species']
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+model=GaussianNB()
+model.fit(X_train,Y_train)
+Y_pred = model.predict(X_test)
+print("Confusion  Matrix:\n", confusion_matrix(Y_test, Y_pred))
+print("Accuracy:", accuracy_score(Y_test, Y_pred))
+print("Error Rate:", 1 - accuracy_score(Y_test, Y_pred))
+print("Precision:", precision_score(Y_test, Y_pred, average='macro'))
+print("Recall:", recall_score(Y_test, Y_pred, average='macro'))
+
+
+Practical 07
+
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from nltk import pos_tag
+from sklearn.feature_extraction.text import TfidfVectorizer
+nltk.download('averaged_perceptron_tagger_eng')
+
+text=" Data science is amazing and powerfull"
+tokens = word_tokenize(text)
+print(tokens)
+pos_tags = pos_tag(tokens)
+print("\nPOS Tagging:\n", pos_tags)
+stop_words = set(stopwords.words('english'))
+filtered = [w for w in tokens if w.lower() not in stop_words]
+print(filtered)
+ps = PorterStemmer()
+stemmed = [ps.stem(w) for w in filtered]
+print(stemmed)
+lm = WordNetLemmatizer()
+lemmatized = [lm.lemmatize(w) for w in filtered]
+print(lemmatized)
+vectorizer = TfidfVectorizer()
+tfidf = vectorizer.fit_transform([text])
+print(tfidf.toarray())
+
+
+Practical 08
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+df = pd.read_csv("titanic.csv")
+df.head()
+sns.histplot(df['Fare'], kde=True)
+plt.title("Fare Distribution")
+plt.xlabel("Fare")
+plt.ylabel("Frequency")
+plt.show()
+print("Skewness:", df['Fare'].skew())
+
+
+Practical 09
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+df = pd.read_csv("titanic.csv")
+df.head()
+sns.boxplot(x = 'Sex', y = 'Age', hue = 'Survived', data=df)
+plt.title("Age vs Gender vs Survival")
+plt.xlabel("Gender")
+plt.ylabel("Age")
+plt.show()
+
+Age distribution is right-skewed
+Females tend to survive more than males
+Many middle-aged males did not survive.
+Children and young females had better survival chances.
+A few very old passengers appear as outliers.
+
+
+Practical 10
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+df = pd.read_csv("iris.csv")
+df.head()
+df.drop('Id', axis=1, inplace=True)
+df.hist(figsize=(10,8))
+plt.suptitle("Histograms of Iris Features")
+plt.show()
+plt.figure(figsize=(10,6))
+sns.boxplot(data=df)
+plt.title("Boxplot of Iris Features")
+plt.show()
+sns.boxplot(x='Species', y='PetalLengthCm', data=df)
+plt.title("Petal Length by Species")
+plt.show()
+sns.boxplot(x='Species', y='SepalLengthCm', data=df)
+plt.title("Sepal Length by Species")
+plt.show()
+
+Setosa is clearly separable from other species
+Data mostly normally distributed with few outliers
+
+Petal length is best feature for classification
+Outliers are minimal → dataset is clean
