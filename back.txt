@@ -1,0 +1,205 @@
+
+Practical 2
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Before transformation
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+sns.histplot(df['Attendance_Percentage'], kde=True)
+plt.title("Original Attendance Distribution")
+
+# Apply log transformation
+df['Log_Attendance'] = np.log1p(df['Attendance_Percentage'])
+
+# After transformation
+plt.subplot(1, 2, 2)
+sns.histplot(df['Log_Attendance'], kde=True, color='orange')
+plt.title("Log-Transformed Attendance Distribution")
+plt.tight_layout()
+plt.show()
+
+
+Practical 3
+
+import pandas as pd
+# Load dataset
+df = pd.read_csv("Sample_Data.csv")
+# Group by categorical variable (e.g., AgeGroup)
+grouped = df.groupby('AgeGroup')
+# Calculate summary statistics
+summary_stats = grouped['Income'].agg(['mean', 'median', 'min', 'max', 'std'])
+print("Summary Statistics of Income grouped by Age Group:")
+print(summary_stats)
+# Create a list of numeric values per AgeGroup
+grouped_lists = grouped['Income'].apply(list)
+print("\nList of Income values for each Age Group:")
+print(grouped_lists)
+
+
+Practical 4
+
+# Step 1: Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+# Step 2: Load the dataset
+df = pd.read_csv("BostonHousing.csv")
+# Step 3: Check the dataset
+print("Dataset shape:", df.shape)
+print(df.head())	
+# Step 4: Define features and target
+# Assuming 'medv' is the column for housing price (Median value of owner-occupied homes in $1000s)
+X = df.drop(columns='medv')
+y = df['medv']
+# Step 5: Train/Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Step 6: Create and train Linear Regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+# Step 7: Make predictions
+y_pred = model.predict(X_test)
+# Step 8: Evaluate the model
+print("\nModel Coefficients:")
+print(model.coef_)
+print("\nIntercept:", model.intercept_)
+# Model performance
+print("\nMean Squared Error (MSE):", mean_squared_error(y_test, y_pred))
+print("R-squared (R2 Score):", r2_score(y_test, y_pred))
+# Step 9: Plot predictions vs actual
+plt.figure(figsize=(8,6))
+sns.scatterplot(x=y_test, y=y_pred)
+plt.xlabel("Actual Prices")
+plt.ylabel("Predicted Prices")
+plt.title("Actual vs Predicted House Prices")
+plt.plot([y.min(), y.max()], [y.min(), y.max()], color='red', linestyle='--')
+plt.grid(True)
+plt.show()
+
+
+Practical 8-9
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the Titanic dataset
+df=pd.read_csv("titanic.csv")  # Ensure the dataset is in the same directory
+# Display basic information and first few rows to inspect the dataset
+display(df.info())
+display(df.head())
+# Additional Seaborn visualizations to find patterns
+# Display basic information and first few rows to inspect the dataset
+display(df.info())
+display(df.head())
+# 1. Survival rate by class
+plt.figure(figsize=(8, 5))
+sns.barplot(x='Pclass', y='Survived', hue='Pclass', data=df, errorbar=None, palette='coolwarm', legend=False)
+plt.xlabel('Passenger Class')
+plt.ylabel('Survival Rate')
+plt.title('Survival Rate by Passenger Class')
+plt.show()
+
+# 2. Survival rate by gender
+plt.figure(figsize=(8, 5))
+sns.barplot(x='Sex', y='Survived', hue='Sex', data=df, errorbar=None, palette='viridis', legend=False)
+plt.xlabel('Gender')
+plt.ylabel('Survival Rate')
+plt.title('Survival Rate by Gender')
+plt.show()
+
+# 3. Fare distribution by class
+plt.figure(figsize=(10, 5))
+sns.boxplot(x='Pclass', y='Fare', hue='Pclass', data=df, palette='Set2', legend=False)
+plt.xlabel('Passenger Class')
+plt.ylabel('Fare')
+plt.title('Fare Distribution by Passenger Class')
+plt.yscale('log')  # Log scale for better visualization
+plt.show()
+
+# 4. Age distribution by survival status
+plt.figure(figsize=(10, 5))
+sns.histplot(df, x='Age', hue='Survived', bins=30, kde=True, palette='magma', alpha=0.6)
+plt.xlabel('Age')
+plt.ylabel('Count')
+plt.title('Age Distribution by Survival Status')
+plt.show()
+
+# Plot the histogram of the 'Fare' column
+plt.figure(figsize=(10, 5))
+sns.histplot(df['Fare'], bins=30, kde=True, color='blue')
+plt.xlabel('Fare Price')
+plt.ylabel('Frequency')
+plt.title('Distribution of Ticket Prices (Fare)')
+plt.grid(True)
+plt.show()
+
+
+#Assignment No 9 Visualization II
+# Plot a box plot for Age distribution by Gender and Survival Status
+plt.figure(figsize=(10, 5))
+sns.boxplot(x='Sex', y='Age', hue='Survived', data=df, palette='pastel')
+plt.xlabel('Gender')
+plt.ylabel('Age')
+plt.title('Age Distribution by Gender and Survival Status')
+plt.show()
+
+
+Practical 10
+
+# Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+df = pd.read_csv("Iris.csv")  # Replace with your path if needed
+
+# 1. List down the features and their types
+# ----------------------------
+print("Feature Types:")
+print(df.dtypes)
+
+# 2. Create a histogram for each feature
+# ----------------------------
+# Drop 'Id' for visualization
+data = df.drop(columns='Id')
+# Set plot style
+sns.set(style="whitegrid")
+
+# Plot histograms
+data.hist(bins=15, figsize=(12, 8), layout=(2, 2), edgecolor='black')
+plt.suptitle('Histograms of Iris Features', fontsize=16)
+plt.tight_layout()
+plt.show()
+
+# 3. Create a boxplot for each feature
+# ----------------------------
+plt.figure(figsize=(12, 8))
+for i, column in enumerate(data.columns[:-1], 1):  # Skip 'Species'
+    plt.subplot(2, 2, i)
+    sns.boxplot(y=data[column], color="skyblue")
+    plt.title(f'Boxplot of {column}')
+plt.tight_layout()
+plt.show()
+
+# 4. Compare distributions and identify outliers
+# ----------------------------
+# Summary of outliers using descriptive statistics
+print("\nDescriptive Statistics:")
+print(data.describe())
+
+# Optional: Detect outliers with IQR method
+print("\nPotential Outliers:")
+for column in data.columns[:-1]:
+    Q1 = data[column].quantile(0.25)
+    Q3 = data[column].quantile(0.75)
+    IQR = Q3 - Q1
+    outliers = data[(data[column] < Q1 - 1.5 * IQR) | (data[column] > Q3 + 1.5 * IQR)]
+    print(f"{column}: {len(outliers)} outlier(s)")
