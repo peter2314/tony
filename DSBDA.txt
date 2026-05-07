@@ -207,7 +207,7 @@ plt.show()
 sns.boxplot(x='Species', y='SepalLengthCm', data=df)
 plt.title("Sepal Length by Species")
 plt.show()
-print(data.describe())
+print(df.describe())
 
 Setosa is clearly separable from other species
 Data mostly normally distributed with few outliers
